@@ -3,8 +3,10 @@
 
 
 # List all jobs running on a server
-# - 
-#   url: http://localhost:8080/cc.xml
+- 
+  #url: http://localhost:8080/cc.xml
+  #url: http://localhost:8080
+  url: http://localhost:8080
 
 
 # A server with basic authentication.

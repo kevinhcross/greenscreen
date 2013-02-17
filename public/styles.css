@@ -47,7 +47,31 @@ a {
 }
 
 .failure {
-	background-color: #FA8072;
+	background-color: #FA8000;
+}
+
+.yellow {
+	background-color: #FFFF00;
+}
+
+.yellow_anime {
+	background-color: #F7F7BC;
+}
+
+.red {
+	background-color: #FF0000;
+}
+
+.red_anime {
+	background-color: #FF8080;
+}
+
+.grey {
+	background-color: #848484;
+}
+
+.grey_anime {
+	background-color: #C2BEBE;
 }
 
 .unknown {
