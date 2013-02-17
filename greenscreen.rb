@@ -4,10 +4,12 @@ require 'erb'
 require 'rexml/document'
 require 'hpricot'
 require 'open-uri'
+require 'yaml'
 
 get '/' do
   servers = YAML.load_file 'config.yml'
   return "Add the details of build server to the config.yml file to get started" unless servers
+  puts "there again"
   
   @projects = []
 
