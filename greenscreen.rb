@@ -21,7 +21,7 @@ def get_jobs(url)
   result = JSON.parse(get_data(url))
   job_list = []
   result["jobs"].each do |job_data|
-    #logger.info "Doing #{job_data["name"]}"
+    next if job_data["color"] == "blue"
 
     build_score = -1
     build_text = ""
@@ -76,8 +76,9 @@ get '/' do
     logger.info "url : #{server["url"]}"
     url = URI.escape(server["url"] + "/api/json?depth=1")
     #logger.info "Getting data from #{url}"
-    @sorted_job_list = sort_jobs(get_jobs(url))
-    @sorted_job_list.each { |j| logger.info j }
+    #@sorted_job_list = sort_jobs(get_jobs(url))
+    @sorted_job_list = get_jobs(url)
+    #@sorted_job_list.each { |j| logger.info j }
   end
 
   # If there are no failing jobs then we need to display something
