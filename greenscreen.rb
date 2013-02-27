@@ -9,6 +9,7 @@ require 'json'
 require 'net/http'
 require 'uri'
 
+
 def get_data(url)
   resp = Net::HTTP.get_response(URI.parse(url))
   data = resp.body
@@ -21,6 +22,7 @@ def get_jobs(url)
   result = JSON.parse(get_data(url))
   job_list = []
   result["jobs"].each do |job_data|
+    @@total_job_count += 1
     next if job_data["color"] == "blue"
 
     build_score = -1
@@ -29,7 +31,7 @@ def get_jobs(url)
     test_text = ""
     health_report = job_data["healthReport"]
     if health_report
-      health_report_build = health_report[0]
+      health_report_build = health_report[1]
       if health_report_build
         build_score = health_report_build["score"]
         build_text = health_report_build["description"]
@@ -66,6 +68,7 @@ def sort_jobs(job_list)
 end
 
 get '/' do
+  @@total_job_count = 0
   servers = YAML.load_file 'config.yml'
   logger.info "servers : #{servers}"
   return "Add the details of build server to the config.yml file to get started" unless servers
@@ -84,7 +87,10 @@ get '/' do
   # If there are no failing jobs then we need to display something
   if @sorted_job_list.size == 0 
     logger.info "Adding the all good job"
-    job = JenkinsJob.new "All Good!", "green", url, 100
+    job = JenkinsJob.new "All Good!", "green", url, 100, "Good", 100, "Good", DateTime.now
+    @sorted_job_list << job
+  else
+    job = JenkinsJob.new "Total jobs : #{@@total_job_count}", "info", "", "", "", "", "", DateTime.now
     @sorted_job_list << job
   end
 
@@ -101,19 +107,19 @@ get '/' do
 end
 
 class JenkinsJob
-  attr_accessor :name, :color, :url, :health, :build_text, :test_score, :test_text, :lastCompleted
-  def initialize(name, color, url, health, build_text, test_score, test_text, lastCompleted)
+  attr_accessor :name, :color, :url, :build_score, :build_text, :test_score, :test_text, :lastCompleted
+  def initialize(name, color, url, build_score, build_text, test_score, test_text, lastCompleted)
     @name = name
     @color = color
     @url = url
-    @health = health
+    @build_score = build_score
     @build_text = build_text
     @test_score = test_score
     @test_text = test_text
     @lastCompleted = lastCompleted
   end
   def to_s
-    "#{@name}\t#{@color}\t#{@health}\t#{@build_text}\t#{@test_score}\t#{@test_text}\t#{@url}\t#{@lastCompleted.strftime("%+")}"
+    "#{@name}\t#{@color}\t#{@build_score}\t#{@build_text}\t#{@test_score}\t#{@test_text}\t#{@url}\t#{@lastCompleted.strftime("%+")}"
   end
 end
 

@@ -31,7 +31,8 @@
       <div class="status <%= job.color %>">
         <div class="border">
           <h1 class="<%= job.color %>"><a href="<%= job.url%>"><%= job.name %></a></h1>
-          <p>Last completed :<%= job.lastCompleted.strftime("%F %T") %> (health :<%= job.health %>)</p>
+          <p>Last completed: <%= job.lastCompleted.strftime("%F %T") %></p>
+          <p><%= job.build_text %></p>
           <p><%= job.test_text %></p>
         </div>
       </div>
