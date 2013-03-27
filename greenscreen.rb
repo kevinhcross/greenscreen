@@ -75,7 +75,9 @@ get '/' do
   
   @sorted_job_list = []
 
+  main_server = nil
   servers.each do |server|
+    main_server = server
     logger.info "url : #{server["url"]}"
     url = URI.escape(server["url"] + "/api/json?depth=1")
     #logger.info "Getting data from #{url}"
@@ -90,7 +92,7 @@ get '/' do
     job = JenkinsJob.new "All Good!", "green", url, 100, "Good", 100, "Good", DateTime.now
     @sorted_job_list << job
   else
-    job = JenkinsJob.new "Total jobs : #{@@total_job_count}", "info", "", "", "", "", "", DateTime.now
+    job = JenkinsJob.new "#{URI.decode(main_server["url"].split("/").last)} : #{@@total_job_count}", "info", "", "", "", "", "", DateTime.now
     @sorted_job_list << job
   end
 
