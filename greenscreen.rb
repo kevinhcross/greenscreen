@@ -9,6 +9,7 @@ require 'json'
 require 'net/http'
 require 'uri'
 
+load 'sinatra_config.rb'
 
 def get_data(url)
   resp = Net::HTTP.get_response(URI.parse(url))
@@ -50,9 +51,11 @@ def get_jobs(url)
       #logger.info "last_job_url = #{last_job_url}"
       last_comp_data = JSON.parse(get_data(last_job_url))
       lastCompleted = DateTime.strptime("#{last_comp_data["timestamp"]}", '%Q')
+      claimed_by = last_comp_data["actions"][5]["claimedBy"]
+      puts "claimed_by = #{claimed_by}"
     end
 
-    job = JenkinsJob.new job_data["name"], job_data["color"], job_data["url"], build_score, build_text, test_score, test_text, lastCompleted
+    job = JenkinsJob.new job_data["name"], job_data["color"], job_data["url"], build_score, build_text, test_score, test_text, lastCompleted, claimed_by
     job_list << job
   end
   job_list
@@ -89,10 +92,10 @@ get '/' do
   # If there are no failing jobs then we need to display something
   if @sorted_job_list.size == 0 
     logger.info "Adding the all good job"
-    job = JenkinsJob.new "All Good!", "green", url, 100, "Good", 100, "Good", DateTime.now
+    job = JenkinsJob.new "All Good!", "green", url, 100, "Good", 100, "Good", DateTime.now, ""
     @sorted_job_list << job
   else
-    job = JenkinsJob.new "#{URI.decode(main_server["url"].split("/").last)} : #{@@total_job_count}", "info", "", "", "", "", "", DateTime.now
+    job = JenkinsJob.new "#{URI.decode(main_server["url"].split("/").last)} : #{@@total_job_count}", "info", "", "", "", "", "", DateTime.now, ""
     @sorted_job_list << job
   end
 
@@ -109,8 +112,8 @@ get '/' do
 end
 
 class JenkinsJob
-  attr_accessor :name, :color, :url, :build_score, :build_text, :test_score, :test_text, :lastCompleted
-  def initialize(name, color, url, build_score, build_text, test_score, test_text, lastCompleted)
+  attr_accessor :name, :color, :url, :build_score, :build_text, :test_score, :test_text, :lastCompleted, :claimed_by
+  def initialize(name, color, url, build_score, build_text, test_score, test_text, lastCompleted, claimed_by)
     @name = name
     @color = color
     @url = url
@@ -119,6 +122,7 @@ class JenkinsJob
     @test_score = test_score
     @test_text = test_text
     @lastCompleted = lastCompleted
+    @claimed_by = claimed_by
   end
   def to_s
     "#{@name}\t#{@color}\t#{@build_score}\t#{@build_text}\t#{@test_score}\t#{@test_text}\t#{@url}\t#{@lastCompleted.strftime("%+")}"
