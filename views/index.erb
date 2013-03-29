@@ -31,7 +31,9 @@
       <div class="status <%= job.color %>">
         <div class="border">
           <h1 class="<%= job.color %>"><a href="<%= job.url%>"><%= job.name %></a></h1>
-          <h2 class="green"><%= job.claimed_by %></h2>
+          <% if job.claimed_by != ""  %>
+            <p class="green">claimed: <strong><%= job.claimed_by %></strong> : <%= job.claim_reason %></p>
+          <% end %>
           <p>Last completed: <%= job.lastCompleted.strftime("%F %T") %></p>
           <p><%= job.build_text %></p>
           <p><%= job.test_text %></p>
