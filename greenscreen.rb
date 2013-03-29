@@ -51,7 +51,13 @@ def get_jobs(url)
       #logger.info "last_job_url = #{last_job_url}"
       last_comp_data = JSON.parse(get_data(last_job_url))
       lastCompleted = DateTime.strptime("#{last_comp_data["timestamp"]}", '%Q')
-      claimed_by = last_comp_data["actions"][5]["claimedBy"]
+      claimed_by = ""
+      last_comp_data["actions"].each do |action|
+        puts action
+        if action["claimedBy"]
+          claimed_by = action["claimedBy"]
+        end
+      end
       puts "claimed_by = #{claimed_by}"
     end
 
