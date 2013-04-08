@@ -1,6 +1,6 @@
 
 # A server with basic authentication.
 - 
-  url: http://yourserver/jenkins/view/Your View/
-  username: "User Name"
-  password: yourpassword
+  url: http://ci-server/jenkins/view/zzz All Enabled sonar/
+  username: none
+  password: none
