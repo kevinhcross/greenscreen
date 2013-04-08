@@ -99,7 +99,7 @@ get '/' do
   # If there are no failing jobs then we need to display something
   if @sorted_job_list.size == 0 
     logger.info "Adding the all good job"
-    job = JenkinsJob.new "All Good!", "green", url, 100, "Good", 100, "Good", DateTime.now, "", ""
+    job = JenkinsJob.new "#{URI.decode(main_server["url"].split("/").last)}", "green", url, 100, "#{@@total_job_count} jobs", 100, "", DateTime.now, "", ""
     @sorted_job_list << job
   else
     job = JenkinsJob.new "#{URI.decode(main_server["url"].split("/").last)} : #{@@total_job_count}", "info", "", "", "", "", "", DateTime.now, "", ""
